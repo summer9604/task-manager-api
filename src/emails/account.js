@@ -4,7 +4,7 @@ var transporter = nodemailer.createTransport({
     service: 'hotmail',
     auth: {
       user: process.env.EMAIL,
-      pass: process.env.PASSWORD
+      pass: process.env.PASSWORD 
     }
   });
 
