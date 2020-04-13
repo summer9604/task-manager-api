@@ -1,7 +1,6 @@
 {
   "name": "task-manager",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -24,5 +23,14 @@
   "devDependencies": {
     "env-cmd": "^10.1.0",
     "nodemon": "^2.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/summer9604/task-manager-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/summer9604/task-manager-api/issues"
+  },
+  "homepage": "https://github.com/summer9604/task-manager-api#readme",
+  "description": ""
 }
