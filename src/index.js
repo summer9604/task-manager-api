@@ -13,6 +13,6 @@ app.use(express.json());
 
 var port = process.env.PORT;
 
-app.get('/*', (req, res) => res.status(404).send('Go back :)'));
+app.get('/*', (req, res) => res.status(404).send('Go back hehexd'));
 
 app.listen(port, () => console.log('Server is running on port ' + port));
