@@ -14,7 +14,7 @@ var welcomeMessage = ({email, name}) => {
         to: email,
         subject: 'Welcome!',
         html: "<h1>Welcome to the Task App!</h1><img src='https://media1.tenor.com/images/d187f6cc75de75a9a2dd611a43e1391e/tenor.gif?itemid=15523929'><p>" +
-         name + ", that was easy!</p>"
+        name + ", that was easy!</p>"
       })
     .then(() => console.log('Done'))
     .catch(error => console.log(error));

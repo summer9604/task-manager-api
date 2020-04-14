@@ -9,7 +9,7 @@ router.get('/tasks', auth, async (req, res) => {
 
     var match = {};
     var sort = {};
-    var limit = 2;
+    var limit = 5;
 
     if (req.query.completed) match.isCompleted = req.query.completed === 'true';
 

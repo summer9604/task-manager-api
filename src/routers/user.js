@@ -3,7 +3,7 @@ var sharp = require('sharp');
 var router = new express.Router();
 var auth = require('../middlewares/auth.js');
 var upload = require('../middlewares/multer.js');
-var {welcomeMessage, closeAccountMessage} = require('../emails/account.js');
+var { welcomeMessage, closeAccountMessage } = require('../emails/account.js');
 
 router.use(express.json());
 
@@ -122,7 +122,7 @@ router.patch('/users/me', auth, async (req, res) => {
 router.delete('/users/me', auth, async (req, res) => {
 
     try {
-        req.user.remove();
+        await req.user.remove();
         closeAccountMessage(req.user);
         res.status(200).send(req.user);
     } catch (e) {
