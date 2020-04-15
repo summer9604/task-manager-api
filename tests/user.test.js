@@ -5,22 +5,22 @@ var { userOneId, userOne, setupDatabase } = require('./fixtures/db.js');
 
 beforeEach(setupDatabase);
 
-//
-// User Test Ideas
-//
-// Should not signup user with invalid name/email/password
-// Should not update user if unauthenticated
-// Should not update user with invalid name/email/password
-// Should not delete user if unauthenticated
-
-
-
 //LOGIN
-test('Login should fail with non existent user', async () => {
+test('Login should fail with non existent email', async () => {
     await request(app)
         .post('/users/login')
         .send({
             email: 'cenas_maradas@hotmail.com',
+            password: 'slb4ever'
+        })
+        .expect(401);
+});
+
+test('Login should fail with non existent password', async () => {
+    await request(app)
+        .post('/users/login')
+        .send({
+            email: 'ricardo_energie@hotmail.com',
             password: 'hehexd'
         })
         .expect(401);
@@ -73,7 +73,7 @@ test('Should delete account for logged user', async () => {
     expect(user).toBeNull();
 });
 
-test('Should not delete account for logged user', async () => {
+test('Should not delete account of not logged user', async () => {
     var response = await request(app)
         .delete('/users/me')
         .send()
@@ -106,7 +106,7 @@ test('Should update valid user fields', async () => {
     expect(user.name).toBe('Pablo Aimar');
 });
 
-test('Should update valid user fields', async () => {
+test('Should not update invalid user fields', async () => {
     await request(app)
         .patch('/users/me')
         .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
@@ -115,4 +115,26 @@ test('Should update valid user fields', async () => {
 
     var user = await User.findById(userOneId);
     expect(user.location).toBe(undefined);
+});
+
+test('Should not update user password with keyword "password" ', async () => {
+    var response = await request(app)
+        .patch('/users/me')
+        .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
+        .send({ password: '123password456' })
+        .expect(400);
+
+    expect(response.error).not.toBe(undefined);
+});
+
+test('Should not update user email with invalid email', async () => {
+    var response = await request(app)
+        .patch('/users/me')
+        .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
+        .send({ email: 'ricardo.hotmail.com' })
+        .expect(400);
+
+    var user = await User.findById(userOneId);
+    expect(response.error).not.toBe(undefined);
+    expect(user.email).toBe('ricardo_energie@hotmail.com');
 }); 

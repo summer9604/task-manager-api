@@ -1,27 +1,9 @@
 var request = require('supertest');
 var app = require('../src/app.js');
 var { Task } = require('../src/models/task.js');
-var { userOneId, userOne, taskOneId, taskOne, setupDatabase } = require('./fixtures/db.js');
+var { userOne, userTwo, taskOneId, taskOne, setupDatabase } = require('./fixtures/db.js');
 
-beforeEach(setupDatabase); 
-
-//
-// Task Test Ideas
-//
-// Should not create task with invalid description/completed
-// Should not update task with invalid description/completed
-// Should delete user task
-// Should not delete task if unauthenticated
-// Should not update other users task
-// Should fetch user task by id
-// Should not fetch user task by id if unauthenticated
-// Should not fetch other users task by id
-// Should fetch only completed tasks
-// Should fetch only incomplete tasks
-// Should sort tasks by description/completed/createdAt/updatedAt
-// Should fetch page of tasks
-
-
+beforeEach(setupDatabase);
 
 //CREATE TASK
 test('Should create task for user', async () => {
@@ -38,6 +20,14 @@ test('Should create task for user', async () => {
     expect(task).not.toBeNull();
 });
 
+test('Should not create task with no description', async () => {
+    await request(app)
+        .post('/tasks')
+        .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
+        .send({ isCompleted: false })
+        .expect(400);
+});
+
 //DELETE TASK
 test('Should delete task', async () => {
     await request(app)
@@ -48,6 +38,16 @@ test('Should delete task', async () => {
 
     var task = await Task.findById(taskOneId);
     expect(task).toBeNull();
+});
+
+test('Should delete task', async () => {
+    await request(app)
+        .delete('/tasks/' + taskOneId)
+        .send()
+        .expect(401);
+
+    var task = await Task.findById(taskOneId);
+    expect(task).not.toBeNull();
 });
 
 //UPDATE TASK
@@ -62,6 +62,14 @@ test('Should update a task', async () => {
     expect(task.description).toBe('Hurra! O segredo agora é outro! :)');
 });
 
+test('Should not update task from other user', async () => {
+    await request(app)
+        .patch('/tasks/' + taskOneId)
+        .set('Authorization', userTwo.tokens[0].token)
+        .send({ description: 'Destined to fail', isCompleted: true })
+        .expect(404);
+});
+
 //GET TASK
 test('Should retrieve a task', async () => {
     var response = await request(app)
@@ -74,8 +82,23 @@ test('Should retrieve a task', async () => {
     expect(task.description).toBe(taskOne.description);
 });
 
+test('Should not retrieve a task from other user', async () => {
+    await request(app)
+        .get('/tasks/' + taskOneId)
+        .set('Authorization', 'Bearer ' + userTwo.tokens[0].token)
+        .send()
+        .expect(404);
+});
+
+test('Should not retrieve a task without authentication', async () => {
+    await request(app)
+        .get('/tasks/' + taskOneId)
+        .send()
+        .expect(401);
+});
+
 //GET TASKS
-test('Should retrieve user´s tasks, according to the stablished maximum: 5', async () => {
+test('Should retrieve userOne tasks, according to the stablished maximum: 5', async () => {
     var response = await request(app)
         .get('/tasks')
         .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
@@ -83,7 +106,7 @@ test('Should retrieve user´s tasks, according to the stablished maximum: 5', as
         .expect(200);
 
     var tasks = response.body;
-    expect(tasks.length).toBe(3);
+    expect(tasks.length).toBe(2);
 });
 
 //GET INCOMPLETED TASKS
@@ -95,7 +118,7 @@ test('Should only retrieve incompleted tasks', async () => {
         .expect(200);
 
     var tasks = response.body;
-    expect(tasks.length).toBe(2);
+    expect(tasks.length).toBe(1);
     tasks.forEach(task => expect(task.isCompleted).toBe(false));
 });
 

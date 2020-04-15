@@ -16,9 +16,20 @@ var userOne = {
     }]
 };
 
+var userTwoId = new mongoose.Types.ObjectId();
+
+var userTwo = {
+    _id: userTwoId,
+    name: 'Pablo Aimar',
+    email: 'magico10@hotmail.com',
+    password: 'slb4ever',
+    age: 24,
+    tokens: [{
+        token: jwt.sign({ _id: userTwoId }, process.env.JWT_SECRET)
+    }]
+};
+
 var taskOneId = new mongoose.Types.ObjectId();
-var taskTwoId = new mongoose.Types.ObjectId();
-var taskThreeId = new mongoose.Types.ObjectId();
 
 var taskOne = {
     _id: taskOneId,
@@ -27,6 +38,9 @@ var taskOne = {
     owner: userOneId
 };
 
+
+var taskTwoId = new mongoose.Types.ObjectId();
+
 var taskTwo = {
     _id: taskTwoId,
     description: 'Finish NodeJS course',
@@ -34,17 +48,21 @@ var taskTwo = {
     owner: userOneId
 };
 
+
+var taskThreeId = new mongoose.Types.ObjectId();
+
 var taskThree = {
     _id: taskThreeId,
     description: 'Finish NodeJS course',
     isCompleted: false,
-    owner: userOneId
+    owner: userTwoId
 };
 
 var setupDatabase = async () => {
     await User.deleteMany();
     await Task.deleteMany();
     await new User(userOne).save();
+    await new User(userTwo).save();
     await new Task(taskOne).save();
     await new Task(taskTwo).save();
     await new Task(taskThree).save();
@@ -54,6 +72,8 @@ var setupDatabase = async () => {
 module.exports = {
     userOneId,
     userOne,
+    userTwoId,
+    userTwo,
     taskOneId,
     taskTwoId,
     taskThreeId,
