@@ -11,7 +11,7 @@ test('Login should fail with non existent email', async () => {
         .post('/users/login')
         .send({
             email: 'cenas_maradas@hotmail.com',
-            password: 'slb4ever'
+            password: 'slb4ever' 
         })
         .expect(401);
 });

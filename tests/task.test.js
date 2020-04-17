@@ -131,5 +131,6 @@ test('Should retrieve tasks in ascending order', async () => {
         .expect(200);
 
     var tasks = response.body;
-    expect(tasks[0]._id).toEqual(taskOneId);
+
+    expect(tasks[0]._id).toBe(taskOneId);
 });
